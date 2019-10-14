@@ -1,0 +1,870 @@
+﻿<button onclick = "iniciar_fase_1()">FASE 1</button>
+<button onclick = "iniciar_fase_2()">FASE 2</button>
+<button onclick = "iniciar_fase_3()">FASE 3</button>
+
+<canvas id="tela" width="800" height="600"></canvas>
+<script>
+/*
+   Jogo da Cobra - JavaScript
+   Autor: Jan Bodnar
+   http://zetcode.com/javascript/snake/
+   Adaptado por: Gilson Pereira
+*/
+
+// Principal
+var player;
+
+var tela;
+var c;
+
+var rank_pontos = [0,0,0,0,0,0,0,0,0,0];
+var rank_nomes = ["Nobody","Nobody","Nobody","Nobody","Nobody","Nobody","Nobody","Nobody","Nobody","Nobody"];
+
+var cabeca;
+var maca_vermelha;
+var maca_branca;
+var maca_amarela;
+var maca_verde;
+var maca_azul;
+
+var cntrl_cor_verm = false;
+var cntrl_cor_amar = false;
+var cntrl_cor_verd = false;
+var cntrl_cor_azul = true;
+var cntrl_cor_brnc = false;
+
+var bola;
+var obstaculo;
+var parede;
+
+var vidas;
+var cntrlvidas;
+var cntrlmaca;
+var pontos;
+
+var maca_x_fase1;
+var maca_y_fase1;
+var maca_x = [];
+var maca_y = [];
+var maca_x_fase_3 = [];
+var maca_y_fase_3 = [];
+var obstaculo_x = [];
+var obstaculo_y = [];
+var obstaculo_x_fase_3 = [];
+var obstaculo_y_fase_3 = [];
+var parede_x = [200,400];
+var parede_y = [200,220,240,260,280,300,320,340,360,380];
+
+var paraEsquerda = false;
+var paraDireita = true;
+var paraCima = false;
+var paraBaixo = false;  
+
+var noJogo = true;    
+
+const TAMANHO_PONTO = 20;
+const ALEATORIO_MAXIMO = 30;
+const ATRASO = 100;
+const C_ALTURA = 600;
+const C_LARGURA = 600;    
+
+const TECLA_ESQUERDA = 37;
+const TECLA_DIREITA = 39;
+const TECLA_ACIMA = 38;
+const TECLA_ABAIXO = 40;
+
+var musica;
+var mordida;
+var batida;
+
+var x = [];
+var y = [];
+var cobra_start = Math.floor(Math.random()  * ALEATORIO_MAXIMO) * 20;
+
+// Funções
+function timecntrl() {
+	noJogo = false;
+}
+
+function iniciar_fase_1() {
+ 
+	noJogo = true;
+	paraEsquerda = false;
+	paraDireita = true;
+	paraCima = false;
+	paraBaixo = false;  
+
+	batida = new Audio("batida.mp3");
+	mordida = new Audio("mordida.mp3");
+	musica = new Audio("The Lost Battalion.mp3");
+	//musica.play();
+
+    tela = document.getElementById("tela");
+    c = tela.getContext("2d");
+
+	c.fillStyle = "GoldenRod";
+	c.fillRect(0, 0, C_LARGURA, C_ALTURA);
+
+    carregarImagens();
+    criarCobra_fase_1();
+    localizarMaca_fase_1();
+    setTimeout("cicloDeJogo_fase_1()", ATRASO);
+}    
+
+function iniciar_fase_2() {
+
+	setdirecao = Math.floor(Math.random() * 4);
+	switch (setdirecao){
+	case 0:
+		paraEsquerda = true;
+		paraDireita = false;
+		paraCima = false;
+		paraBaixo = false;
+		break;
+	case 1:
+		paraEsquerda = false;
+		paraDireita = true;
+		paraCima = false;
+		paraBaixo = false;
+		break;
+	case 2:
+		paraEsquerda = false;
+		paraDireita = false;
+		paraCima = true;
+		paraBaixo = false;
+		break;
+	case 3:
+		paraEsquerda = false;
+		paraDireita = false;
+		paraCima = false;
+		paraBaixo = true;
+		break;
+	}
+
+	noJogo = true;
+	vidas = 5;
+	cntrlvidas = 0;
+	cntrlmaca = 0;
+	maca_x.length = 0;
+	maca_y.length = 0;
+	obstaculo_x.length = 0;
+	obstaculo_y.length = 0;
+
+	batida = new Audio("batida.mp3");
+	mordida = new Audio("mordida.mp3");
+	musica = new Audio("The Lost Battalion.mp3");
+	//musica.play();
+
+    tela = document.getElementById("tela");
+    c = tela.getContext("2d");
+
+	c.fillStyle = "GoldenRod";
+	c.fillRect(0, 0, C_LARGURA, C_ALTURA);
+
+    setTimeout("timecntrl()", 60000);
+    carregarImagens();
+    criarCobra_fase_2();
+    localizarMaca_fase_2();
+    localizarObstaculo();
+    setTimeout("cicloDeJogo_fase_2()", ATRASO);
+}
+
+function iniciar_fase_3() {
+
+	//player = prompt("Qual seu nome?");
+	setdirecao = Math.floor(Math.random() * 4);
+	switch (setdirecao){
+	case 0:
+		paraEsquerda = true;
+		paraDireita = false;
+		paraCima = false;
+		paraBaixo = false;
+		break;
+	case 1:
+		paraEsquerda = false;
+		paraDireita = true;
+		paraCima = false;
+		paraBaixo = false;
+		break;
+	case 2:
+		paraEsquerda = false;
+		paraDireita = false;
+		paraCima = true;
+		paraBaixo = false;
+		break;
+	case 3:
+		paraEsquerda = false;
+		paraDireita = false;
+		paraCima = false;
+		paraBaixo = true;
+		break;
+	}
+
+	noJogo = true;
+	vidas = 5;
+	cntrlvidas = 0;
+	cntrlmaca = 0;
+
+	maca_x.length = 0;
+	maca_y.length = 0;
+	obstaculo_x.length = 0;
+	obstaculo_y.length = 0;
+
+	maca_x_fase_3.length = 0;
+	maca_y_fase_3.length = 0;
+	obstaculo_x_fase_3.length = 0;
+	obstaculo_y_fase_3.length = 0;
+
+	batida = new Audio("batida.mp3");
+	mordida = new Audio("mordida.mp3");
+	musica = new Audio("The Lost Battalion.mp3");
+	//musica.play();
+
+    tela = document.getElementById("tela");
+    c = tela.getContext("2d");
+
+	c.fillStyle = "Black";
+	c.fillRect(0, 0, C_LARGURA, C_ALTURA);
+
+    setTimeout("timecntrl()", 60000);
+    carregarImagens();
+    criarCobra_fase_1();
+    localizarMaca_fase_3();
+    localizarObstaculo_fase_3();
+    setTimeout("cicloDeJogo_fase_3()", ATRASO);
+}    
+
+function carregarImagens() {
+    cabeca = new Image();
+    cabeca.src = "novacabeca.png";    
+    
+    bola = new Image();
+    bola.src = "novocorpo.png"; 
+    
+    maca_vermelha = new Image();
+    maca_vermelha.src = "maca_vermelha.png";
+
+    maca_amarela = new Image();
+    maca_amarela.src = "maca_amarela.png"
+
+	maca_verde = new Image();
+    maca_verde.src = "maca_verde.png"
+
+    maca_azul = new Image();
+    maca_azul.src = "maca_azul.png"
+
+    maca_branca = new Image();
+    maca_branca.src = "maca_branca.png"
+
+    obstaculo = new Image();
+    obstaculo.src = "obstaculo.png";
+
+    parede = new Image();
+    parede.src = "parede.png";
+}
+
+function criarCobra_fase_1() {
+    pontos = 5;
+	
+    for (var z = 0; z < pontos; z++) {
+        x[z] = 60 - z * TAMANHO_PONTO;
+        y[z] = 60;
+    }
+}
+
+function criarCobra_fase_2() {
+    pontos = 5;
+	if (setdirecao > 0) {
+    	for (var z = 0; z < pontos; z++) {
+    		if (z == 0) {
+        		x[z] = cobra_start;
+        		y[z] = cobra_start;
+    		}
+    		if (z > 0) {
+    			x[z] = cobra_start - z * TAMANHO_PONTO;
+        		y[z] = cobra_start;
+        	}
+    	}
+    } else {
+    	for (var z = 0; z < pontos; z++) {
+    		if (z == 0) {
+        		x[z] = cobra_start;
+        		y[z] = cobra_start;
+    		}
+    		if (z > 0) {
+    			x[z] = cobra_start + z * TAMANHO_PONTO;
+        		y[z] = cobra_start;
+        	}
+    	}
+    }
+}
+
+function localizarMaca_fase_1() {
+    var r = Math.floor(Math.random() * ALEATORIO_MAXIMO);
+    maca_x_fase1 = r * TAMANHO_PONTO;
+
+    r = Math.floor(Math.random() * ALEATORIO_MAXIMO);
+    maca_y_fase1 = r * TAMANHO_PONTO;
+}    
+
+function localizarMaca_fase_2() {
+	for (var comidas = 0; comidas < 15; comidas++) {
+    	var r = Math.floor(Math.random() * ALEATORIO_MAXIMO);
+    	maca_x[comidas] = r * TAMANHO_PONTO;
+
+    	r = Math.floor(Math.random() * ALEATORIO_MAXIMO);
+    	maca_y[comidas] = r * TAMANHO_PONTO;
+
+    	if (comidas > 0) {
+    		for (var z = 0; z < maca_x.length-1; z++) {
+    			if (maca_x[comidas] == maca_x[z] && maca_y[comidas] == maca_y[z]) {
+    				comidas--;
+    				break;
+				}
+    		}
+    	}
+    }
+}
+
+function localizarMaca_fase_3() {
+	var check = true;
+	for (var comidas = 0; comidas < 15; comidas++) {
+    	var r = Math.floor(Math.random() * ALEATORIO_MAXIMO);
+    	maca_x_fase_3[comidas] = r * TAMANHO_PONTO;
+
+    	r = Math.floor(Math.random() * ALEATORIO_MAXIMO);
+    	maca_y_fase_3[comidas] = r * TAMANHO_PONTO;
+
+    	for (var q = 0; q < 10; q++) {
+    		if (maca_x_fase_3[comidas] == parede_x[0] && maca_y_fase_3 == parede_y[q] || maca_x_fase_3[comidas] == parede_x[1] && maca_y_fase_3 == parede_y[q]) {
+    			comidas--;
+    			check = false;
+    			break;
+    		} else {
+    			check = true;
+    		}
+    	}
+
+    	if (comidas > 0 && check) {
+    		for (var z = 0; z < maca_x.length-1; z++) {
+    			if (maca_x[comidas] == maca_x[z] && maca_y[comidas] == maca_y[z]) {
+    				comidas--;
+    				break;
+				}
+    		}
+    	}
+    }
+}
+
+function localizarObstaculo() {
+	var passou = true;
+    for (var obstaculos = 0; obstaculos < 10; obstaculos++) {
+        var r = Math.floor(Math.random() * ALEATORIO_MAXIMO);
+        obstaculo_x[obstaculos] = r * TAMANHO_PONTO;
+
+        r = Math.floor(Math.random() * ALEATORIO_MAXIMO);
+        obstaculo_y[obstaculos] = r * TAMANHO_PONTO;
+
+        for (var k = 0; k < 15; k++) {
+        	if (maca_x[k] == obstaculo_x[obstaculos] && maca_y[k] == obstaculo_y[obstaculos]) {
+    			obstaculos--;
+    			passou = false;
+    			break;
+    		} else {
+    			passou = true;
+    		}
+        }
+
+
+        if (obstaculos > 0 && passou) {
+        	for(var y = 0; y < obstaculo_x.length-1; y++) {
+        		if(obstaculo_x[obstaculos] == obstaculo_x[y] && obstaculo_y[obstaculos] == obstaculo_y[y]) {
+        			obstaculos--;
+        			break;
+        		}
+        	}
+        }
+    }
+}
+
+function localizarObstaculo_fase_3() {
+	var passou = true;
+	var check = true;
+    for (var obstaculos = 0; obstaculos < 10; obstaculos++) {
+        var r = Math.floor(Math.random() * ALEATORIO_MAXIMO);
+        obstaculo_x_fase_3[obstaculos] = r * TAMANHO_PONTO;
+
+        r = Math.floor(Math.random() * ALEATORIO_MAXIMO);
+        obstaculo_y_fase_3[obstaculos] = r * TAMANHO_PONTO;
+
+        for (var e = 0; e < 10; e++) {
+    		if (obstaculo_x_fase_3[obstaculos] == parede_x[0] && obstaculo_y_fase_3 == parede_y[e] || obstaculo_x_fase_3[obstaculos] == parede_x[1] && obstaculo_y_fase_3 == parede_y[e]) {
+    			obstaculos--;
+    			check = false;
+    			passou = false;
+    			break;
+    		} else {
+    			check = true;
+    			passou = true;
+    		}
+    	}
+
+    	if (check) {
+
+        	for (var k = 0; k < 15; k++) {
+        		if (maca_x_fase_3[k] == obstaculo_x_fase_3[obstaculos] && maca_y_fase_3[k] == obstaculo_y_fase_3[obstaculos]) {
+    				obstaculos--;
+    				passou = false;
+    				break;
+    			} else {
+    				passou = true;
+    			}
+        	}
+        }
+
+
+        if (obstaculos > 0 && passou) {
+        	for(var y = 0; y < obstaculo_x.length-1; y++) {
+        		if(obstaculo_x[obstaculos] == obstaculo_x[y] && obstaculo_y[obstaculos] == obstaculo_y[y]) {
+        			obstaculos--;
+        			break;
+        		}
+        	}
+        }
+    }
+}    
+
+function cicloDeJogo_fase_1() {
+    if (noJogo) {
+        verificarMaca_fase_1();
+        verificarColisao_fase_1();
+        mover();
+        fazerDesenho_fase_1();
+        setTimeout("cicloDeJogo_fase_1()", ATRASO);
+    }
+}
+
+function cicloDeJogo_fase_2() {
+    fazerDesenho_fase_2();
+	if (noJogo) {
+    		verificarObstaculo();
+        	verificarMaca_fase_2();
+        	verificarColisao_fase_2();
+        	mover();
+        	setTimeout("cicloDeJogo_fase_2()", ATRASO);
+        
+    }
+}
+
+function cicloDeJogo_fase_3() {
+    fazerDesenho_fase_3();
+	if (noJogo) {
+    		verificarObstaculo_fase_3();
+        	verificarMaca_fase_3();
+        	verificarColisao_fase_3();
+        	mover();
+        	setTimeout("cicloDeJogo_fase_3()", ATRASO - ((pontos - 5) * 2) );
+        
+    }
+}
+
+
+function verificarMaca_fase_1() {
+    if ((x[0] == maca_x_fase1) && (y[0] == maca_y_fase1)) {
+        pontos++;
+        localizarMaca_fase_1();
+        mordida.play();
+        mordida.currentTime = 0;
+    }
+}    
+
+function verificarMaca_fase_2() {
+	for (var comidas = 0; comidas < 15; comidas++) {
+    	if ((x[0] == maca_x[comidas]) && (y[0] == maca_y[comidas])) {
+        	pontos++;
+        	cntrlvidas++;
+        	cntrlmaca++;
+        	maca_x[comidas] = -5000;
+        	maca_y[comidas] = -5000;
+        	mordida.play();
+        	mordida.currentTime = 0;
+    	}
+    	if (cntrlvidas == 3) {
+    		vidas++;
+    		cntrlvidas = 0;
+    	}
+    	if (cntrlmaca == 15) {
+    		noJogo = false;
+    	}
+    }
+}
+
+function verificarMaca_fase_3() {
+	for (var comidas = 0; comidas < 15; comidas++) {
+    	if ((x[0] == maca_x_fase_3[comidas]) && (y[0] == maca_y_fase_3[comidas])) {
+    		if(comidas < 3) {
+        		pontos = pontos + 5;
+        		cntrl_cor_verm = true;
+				cntrl_cor_amar = false;
+				cntrl_cor_verd = false;
+				cntrl_cor_azul = false;
+				cntrl_cor_brnc = false;
+        	} else if (comidas >= 3 && comidas < 6) {
+        		pontos = pontos + 4;
+        		cntrl_cor_verm = false;
+				cntrl_cor_amar = true;
+				cntrl_cor_verd = false;
+				cntrl_cor_azul = false;
+				cntrl_cor_brnc = false;
+        	} else if(comidas >= 6 && comidas < 9) {
+        		pontos = pontos + 3;
+        		cntrl_cor_verm = false;
+				cntrl_cor_amar = false;
+				cntrl_cor_verd = true;
+				cntrl_cor_azul = false;
+				cntrl_cor_brnc = false;
+        	} else if (comidas >= 9 && comidas < 12) {
+        		pontos = pontos + 2;
+        		cntrl_cor_verm = false;
+				cntrl_cor_amar = false;
+				cntrl_cor_verd = false;
+				cntrl_cor_azul = true;
+				cntrl_cor_brnc = false;
+        	} else {
+        		pontos++;
+        		cntrl_cor_verm = false;
+				cntrl_cor_amar = false;
+				cntrl_cor_verd = false;
+				cntrl_cor_azul = false;
+				cntrl_cor_brnc = true;
+        	}
+
+        	cntrlvidas++;
+        	cntrlmaca++;
+        	maca_x_fase_3[comidas] = -5000;
+        	maca_y_fase_3[comidas] = -5000;
+        	mordida.play();
+        	mordida.currentTime = 0;
+    	}
+    	if (cntrlvidas == 3) {
+    		vidas++;
+    		cntrlvidas = 0;
+    	}
+    	if (cntrlmaca == 15) {
+    		noJogo = false;
+    	}
+    }
+}   
+
+
+function verificarObstaculo() {
+	for (var obstaculos = 0; obstaculos < 10; obstaculos++) {
+    	if ((x[0] == obstaculo_x[obstaculos]) && (y[0] == obstaculo_y[obstaculos])) {
+        	obstaculo_x[obstaculos] = -5000;
+        	obstaculo_y[obstaculos] = -5000;
+        	vidas--;
+        	batida.play();
+        	batida.currentTime = 0;
+    	}
+    	if (vidas == 0) {
+    		noJogo = false;
+    	}
+    }
+}
+
+function verificarObstaculo_fase_3() {
+	for (var obstaculos = 0; obstaculos < 10; obstaculos++) {
+    	if ((x[0] == obstaculo_x_fase_3[obstaculos]) && (y[0] == obstaculo_y_fase_3[obstaculos])) {
+        	obstaculo_x_fase_3[obstaculos] = -5000;
+        	obstaculo_y_fase_3[obstaculos] = -5000;
+        	vidas--;
+        	batida.play();
+        	batida.currentTime = 0;
+    	}
+    	if (vidas == 0) {
+    		noJogo = false;
+    	}
+    }
+}     
+
+function verificarColisao_fase_1() {
+    for (var z = pontos; z > 0; z--) {
+        if ((z > 4) && (x[0] == x[z]) && (y[0] == y[z])) {
+            noJogo = false;
+        }
+    }
+
+    if (y[0] >= C_ALTURA) {
+        noJogo = false;
+    }
+
+    if (y[0] < 0) {
+       noJogo = false;
+    }
+
+    if (x[0] >= C_LARGURA) {
+      noJogo = false;
+    }
+
+    if (x[0] < 0) {
+      noJogo = false;
+    }
+}
+
+function verificarColisao_fase_2() {
+    for (var z = pontos; z > 0; z--) {
+        if ((z > 4) && (x[0] == x[z]) && (y[0] == y[z])) {
+            noJogo = false;
+        }
+    }
+
+
+    if (y[0] >= C_ALTURA) {
+        y[0] = 0;
+    }
+
+    if (y[0] < 0) {
+        y[0] = C_ALTURA;
+    }
+
+    if (x[0] >= C_LARGURA) {
+        x[0] = 0;
+    }
+
+    if (x[0] < 0) {
+        x[0] = C_LARGURA;
+    }
+}
+
+function verificarColisao_fase_3() {
+    for (var z = pontos; z > 0; z--) {
+        if ((z > 4) && (x[0] == x[z]) && (y[0] == y[z])) {
+            noJogo = false;
+        }
+    }
+    
+    for (var w = 0; w < 10; w++) {
+    	if(x[0] == parede_x[0] && y[0] == parede_y[w] || x[1] == parede_x[1] && y[0] == parede_y[w]){
+    		batida.play();
+    		noJogo = false;
+    	}
+    }
+
+    if (y[0] >= C_ALTURA) {
+        y[0] = 0;
+    }
+
+    if (y[0] < 0) {
+        y[0] = C_ALTURA;
+    }
+
+    if (x[0] >= C_LARGURA) {
+        x[0] = 0;
+    }
+
+    if (x[0] < 0) {
+        x[0] = C_LARGURA;
+    }
+}
+
+function mover() {
+    for (var z = pontos; z > 0; z--) {
+        x[z] = x[z-1];
+        y[z] = y[z-1];
+    }
+
+    if (paraEsquerda) {
+        x[0] -= TAMANHO_PONTO;
+    }
+
+    if (paraDireita) {
+        x[0] += TAMANHO_PONTO;
+    }
+
+    if (paraCima) {
+        y[0] -= TAMANHO_PONTO;
+    }
+
+    if (paraBaixo) {
+        y[0] += TAMANHO_PONTO;
+    }
+    c.clearRect(600, 0, 620, 600);
+}    
+
+function fazerDesenho_fase_1() {
+	c.clearRect(0, 0, C_LARGURA, C_ALTURA);
+	c.fillRect(0, 0, C_LARGURA, C_ALTURA);	
+    
+	if (noJogo) {
+        	c.drawImage(maca_vermelha, maca_x_fase1, maca_y_fase1);
+
+        for (var z = 0; z < pontos; z++) {
+            if (z == 0) {
+                c.drawImage(cabeca, x[z], y[z]);
+            } else {
+                c.drawImage(bola, x[z], y[z]);
+            }
+        }    
+    } else {
+		fimDeJogo();
+    }        
+}
+
+function fazerDesenho_fase_2() {
+	c.clearRect(0, 0, C_LARGURA, C_ALTURA);
+	c.fillRect(0, 0, C_LARGURA, C_ALTURA);	
+    
+	if (noJogo) {
+    	for (var comidas = 0; comidas < 15; comidas++) {
+        	c.drawImage(maca_vermelha, maca_x[comidas], maca_y[comidas]);
+        }
+    	for (var obstaculos = 0; obstaculos < 10; obstaculos++) {
+        	c.drawImage(obstaculo, obstaculo_x[obstaculos], obstaculo_y[obstaculos]);
+        }
+		
+        for (var z = 0; z < pontos; z++) {
+            if (z == 0) {
+                c.drawImage(cabeca, x[z], y[z]);
+            } else {
+                c.drawImage(bola, x[z], y[z]);
+            }
+        }    
+    } else {
+		fimDeJogo_2();
+    }        
+}
+
+function fazerDesenho_fase_3() {
+	c.clearRect(0, 0, C_LARGURA, C_ALTURA);
+	c.fillRect(0, 0, C_LARGURA, C_ALTURA);	
+    
+	if (noJogo) {
+    	for (var comidas = 0; comidas < 15; comidas++) {
+    		if (comidas < 3) {
+        		c.drawImage(maca_vermelha, maca_x_fase_3[comidas], maca_y_fase_3[comidas]);
+        	} else if(comidas >= 3 && comidas < 6) {
+        		c.drawImage(maca_amarela, maca_x_fase_3[comidas], maca_y_fase_3[comidas]);
+        	} else if(comidas >= 6 && comidas < 9) {
+        		c.drawImage(maca_verde, maca_x_fase_3[comidas], maca_y_fase_3[comidas]);
+        	} else if(comidas >= 9 && comidas < 12) {
+        		c.drawImage(maca_azul, maca_x_fase_3[comidas], maca_y_fase_3[comidas]);
+        	} else {
+        		c.drawImage(maca_branca, maca_x_fase_3[comidas], maca_y_fase_3[comidas]);
+        	}
+        }
+    	for (var obstaculos = 0; obstaculos < 10; obstaculos++) {
+        	c.drawImage(obstaculo, obstaculo_x_fase_3[obstaculos], obstaculo_y_fase_3[obstaculos]);
+        }
+		
+        for (var paredes = 0; paredes < 10; paredes++) {
+        	c.drawImage(parede, parede_x[0], parede_y[paredes]);
+        	c.drawImage(parede, parede_x[1], parede_y[paredes]);
+        }
+
+        for (var z = 0; z < pontos; z++) {
+            if (z == 0) {
+                c.drawImage(cabeca, x[z], y[z]);
+            } else {
+            	if(cntrl_cor_verm) {
+                	c.drawImage(maca_vermelha, x[z], y[z]);
+                } else if(cntrl_cor_amar) {
+                	c.drawImage(maca_amarela, x[z], y[z]);
+                } else if(cntrl_cor_verd) {
+                	c.drawImage(maca_verde, x[z], y[z]);
+                } else if(cntrl_cor_azul) {
+                	c.drawImage(maca_azul, x[z], y[z]);
+                } else {
+                	c.drawImage(maca_branca, x[z], y[z]);
+                }
+            }
+        }    
+    } else {
+		fimDeJogo_3();
+    }        
+ }   
+
+function fimDeJogo() {
+	musica.pause();
+    c.fillStyle = "RED";
+    c.textBaseline = "middle"; 
+    c.textAlign = "center"; 
+    c.font = "bold 20px Stylus BT, sans-serif";
+    c.fillText("GAME OVER!", C_LARGURA/2, C_ALTURA/2);
+}
+
+function fimDeJogo_2() {
+	musica.pause();
+    c.fillStyle = "RED";
+    c.textBaseline = "middle"; 
+    c.textAlign = "center"; 
+    c.font = "bold 20px Stylus BT, sans-serif";
+    if (cntrlmaca == 15) {
+    	c.fillText("YOU WIN!", C_LARGURA/2, C_ALTURA/2);
+    } else {
+    	c.fillText("GAME OVER!", C_LARGURA/2, C_ALTURA/2);
+	}
+}
+
+function fimDeJogo_3() {
+	musica.pause();
+    c.fillStyle = "RED";
+    c.textBaseline = "middle"; 
+    c.textAlign = "center"; 
+    c.font = "bold 20px Stylus BT, sans-serif";
+    if (cntrlmaca == 15) {
+    	c.fillText("YOU WIN!", C_LARGURA/2, C_ALTURA/2);
+    } else {
+    	c.fillText("GAME OVER!", C_LARGURA/2, C_ALTURA/2);
+	}
+	//rank();
+
+}
+
+function rank () {
+	var aux1;
+
+	if((pontos - 5) >= rank_pontos[0]) {
+
+		rank_pontos[0] = pontos -5;
+		rank_nomes[0] = player;
+
+		rank_pontos.sort();
+		for(var t = 1; t < 10; t++) {
+			if(rank_pontos[t] == pontos) {
+				aux1 = rank_nomes[t];
+				rank_nomes[t] = rank_nomes[0];
+			}
+		}
+	}
+
+	alert("Rank: \n" + rank_nomes[9] + " " + rank_pontos[9] + "\n" + rank_nomes[8] + " " + rank_pontos[8] + "\n" + rank_nomes[7] + " " + rank_pontos[7] + "\n" + rank_nomes[6] + " " + rank_pontos[6] + "\n" + rank_nomes[5] + " " + rank_pontos[5] + "\n" + rank_nomes[4] + " " + rank_pontos[4] + "\n" + rank_nomes[3] + " " + rank_pontos[3] + "\n" + rank_nomes[2] + " " + rank_pontos[2] + "\n" + rank_nomes[1] + " " + rank_pontos[1] + "\n" + rank_nomes[0] + " " + rank_pontos[0]);
+}
+
+onkeydown = function(e) {
+    var tecla = e.keyCode;
+
+    if ((tecla == TECLA_ESQUERDA) && (!paraDireita)) {
+        paraEsquerda = true;
+        paraCima = false;
+        paraBaixo = false;
+    }
+
+    if ((tecla == TECLA_DIREITA) && (!paraEsquerda)) {
+        paraDireita = true;
+        paraCima = false;
+        paraBaixo = false;
+    }
+
+    if ((tecla == TECLA_ACIMA) && (!paraBaixo)) {
+        paraCima = true;
+        paraDireita = false;
+        paraEsquerda = false;
+    }
+
+    if ((tecla == TECLA_ABAIXO) && (!paraCima)) {
+        paraBaixo = true;
+        paraDireita = false;
+        paraEsquerda = false;
+    }        
+};    
+</script>

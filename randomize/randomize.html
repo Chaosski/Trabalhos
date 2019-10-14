@@ -1,0 +1,77 @@
+<script>
+
+//
+// PROGRAMA DE SORTEIO MEGA SENA. TRABALHO MATEMÁTICA DISCRETA OUTUBRO 2019.
+// DESENVOLVEDOR: MARCELO IURY NECO DE SOUZA
+// 
+// PROBLEMA: DESENVOVLER UM PROGRAMA QUE RETORNE 6 NÚMEROS "ALEATÓRIOS".
+// 
+// INICIADO EM 12/10/2019.
+// FINALIZADO EM 14/10/2019 02:53.
+//
+// OBS: SOMENTE BACK-END
+//
+
+function randomize(numeroaux) {
+	var numero = [];
+	for(var i = 0; i < 10000; i++) {
+		numero[i] = numeroaux**2;
+		while(numero[i] >= 1000000) {
+			numero[i] = numero[i] / 2;
+		}
+		if(numero < 10) {
+		} else if (numero[i] >= 10 && numero[i] < 100) {
+			numero[i] = Math.floor(numero[i]/10);
+		} else if(numero[i] >= 100 && numero[i] < 1000) {
+			numero[i] = Math.floor(numero[i]/10);
+			numero[i] = numero[i] % 10;	
+		} else if(numero[i] >= 1000 && numero[i] < 10000) {
+			numero[i] = Math.floor(numero[i]/10);
+			numero[i] = numero[i] % 100;
+			if(numero[i] > 60) {
+				numero[i] = numero[i] % 60;
+			}
+		} else if(numero[i] >= 10000 && numero[i] < 100000) {
+			numero[i] = Math.floor(numero[i]/10);
+			numero[i] = numero[i] % 1000;
+			numeroaux = numero[i];
+			if(numero[i] > 60) {
+				numero[i] = numero[i] % 60;
+			}
+		} else if(numero[i] >= 100000 && numero[i] < 1000000) {
+			numero[i] = Math.floor(numero[i]/10);
+			numero[i] = numero[i] % 10000;
+			numeroaux = numero[i];
+			if(numero[i] > 60) {
+				numero[i] = numero[i] % 60;
+			}
+		}
+	}
+	return numero;
+}
+
+var aux;
+var sorteio = [];
+
+for(y = 0; y < 6; y++) {
+	var time_obg = new Date();
+	time = time_obg.getTime();
+	if(time >= 1000) {
+		time = Math.floor(time%1000);
+	}
+	aux = randomize(time);
+
+	sorteio[y] = aux[aux.length - 4865];
+	if(sorteio[y] == 0) {
+		y--;
+	} else if(y > 0) {
+		for(t = 0; t < sorteio.length - 1; t++) {
+			if (sorteio[y] == sorteio[t]) {
+				y--;
+				break;
+			}
+		}
+	}
+}
+document.write(sorteio);
+</script>
