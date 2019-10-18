@@ -1,0 +1,65 @@
+<script>
+
+var matriz = new Array (
+	[],
+	[],
+	[],
+	[]
+);
+
+var R = false;
+var P = false;
+var T80 = false;
+var T90 = false;
+
+var cntrl_RP, cntrl_T89;
+
+for (i = 0; i < 4; i++) {
+
+		if (!R && !P) {
+			cntrl_RP = 0;
+			P = true;
+		} else if (!R && P) {
+			cntrl_RP = 1;
+			R = true;
+		} else if (R && P) {
+			cntrl_RP = 3;
+			P = false;
+		} else {
+			cntrl_RP = 2
+			R = false;
+			P = false;
+	}
+
+	for (k = 0; k < 4; k++) {
+
+		if (!T80 && !T90) {
+			if(cntrl_RP == 0 || cntrl_RP == 2) {
+				matriz[i][k] = 0;
+			} else {
+				matriz[i][k] = 1;
+			}
+			T90 = true;
+		} else if (!T80 && T90) {
+			matriz[i][k] = "x";
+			T80 = true;
+		} else if (T80 && T90) {
+			matriz[i][k] = 1;
+			T90 = false;
+		} else {
+			if (cntrl_RP == 0) {
+				matriz[i][k] = 0;
+			} else {
+				matriz[i][k] = 1;
+			}
+			T80 = false;
+			T90 = false;
+		}
+		document.write(matriz[i][k] + ", ");
+	}
+	document.write("<br>");
+}
+
+
+
+</script>
