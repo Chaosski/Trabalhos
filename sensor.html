@@ -11,11 +11,9 @@ var R = false;
 var P = false;
 var T80 = false;
 var T90 = false;
-
-var cntrl_RP, cntrl_T89;
+var cntrl_RP, cntrl_T89, entrada;
 
 for (i = 0; i < 4; i++) {
-
 		if (!R && !P) {
 			cntrl_RP = 0;
 			P = true;
@@ -23,43 +21,33 @@ for (i = 0; i < 4; i++) {
 			cntrl_RP = 1;
 			R = true;
 		} else if (R && P) {
-			cntrl_RP = 3;
+			cntrl_RP = 2;
 			P = false;
 		} else {
-			cntrl_RP = 2
+			cntrl_RP = 3;
 			R = false;
 			P = false;
 	}
-
-	for (k = 0; k < 4; k++) {
-
+	
+	for (j = 0; j < 4; j++) {
+		entrada = prompt("Valores da Tabela Verdade: ");
 		if (!T80 && !T90) {
-			if(cntrl_RP == 0 || cntrl_RP == 2) {
-				matriz[i][k] = 0;
-			} else {
-				matriz[i][k] = 1;
-			}
+			matriz[cntrl_RP][j] = entrada;
 			T90 = true;
 		} else if (!T80 && T90) {
-			matriz[i][k] = "x";
+			matriz[cntrl_RP][j] = entrada;
 			T80 = true;
 		} else if (T80 && T90) {
-			matriz[i][k] = 1;
+			matriz[cntrl_RP][j] = entrada;
 			T90 = false;
 		} else {
-			if (cntrl_RP == 0) {
-				matriz[i][k] = 0;
-			} else {
-				matriz[i][k] = 1;
-			}
+			matriz[cntrl_RP][j] = entrada;
 			T80 = false;
 			T90 = false;
 		}
-		document.write(matriz[i][k] + ", ");
+		document.write(matriz[i][j] + ", ");
 	}
 	document.write("<br>");
 }
-
-
 
 </script>
